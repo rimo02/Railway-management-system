@@ -83,7 +83,7 @@ Response will include a token:
 Use a MySQL client to check the users, trains, and bookings tables for updates:
 
 ```sql
-    SELECT * FROM users;
-    SELECT * FROM trains;
-    SELECT * FROM bookings;
+    SELECT * FROM irctc.users;
+    SELECT * FROM irctc.trains;
+    SELECT * FROM irctc.bookings;
 ```
