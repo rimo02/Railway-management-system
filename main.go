@@ -11,5 +11,5 @@ func main() {
 
 	r := gin.Default()
 	routes.InitializeRoutes(r, db)
-	r.Run(":8040")
+	r.Run(":8080")
 }
