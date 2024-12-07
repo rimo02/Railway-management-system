@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	"Railway-management-system/models"
+	"Railway-management-system/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
-	"Railway-management-system/models"
-	"Railway-management-system/utils"
 )
 
 func Register(c *gin.Context, db *gorm.DB) {
@@ -23,8 +23,8 @@ func Register(c *gin.Context, db *gorm.DB) {
 
 func Login(c *gin.Context, db *gorm.DB) {
 	var req struct {
-		Username string
-		Password string
+		Username string `json:"username"`
+		Password string `password:"password"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
