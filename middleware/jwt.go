@@ -14,7 +14,7 @@ func JWTAuth() gin.HandlerFunc {
             c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
             return
         }
-        claims, err := utils.ValidateJWT(token)
+        claims, err := utils.ValidateJWT(token,false)
         if err != nil {
             c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
             return

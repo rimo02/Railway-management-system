@@ -10,27 +10,35 @@ import (
 )
 
 func BookSeat(c *gin.Context, db *gorm.DB) {
-	userID, err := utils.GetUserIdFromJWTToken(c)
+	userUUID, err := utils.GetUserIdFromJWTToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
+
 	var req struct {
-		TrainID uint `json:"train_id"`
+		TrainID int64 `json:"train_id"`
 	}
+
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
+
 	var booking models.Booking
 	err = db.Transaction(func(txn *gorm.DB) error {
 		var train models.Train
-		if err := txn.Where("id = ?", req.TrainID).First(&train).Error; err != nil {
+		if err := txn.Where("train_id = ?", req.TrainID).First(&train).Error; err != nil {
 			return err
 		}
 
 		if train.AvailableSeats < 1 {
 			return errors.New("no seats remaining")
+		}
+
+		var user models.User
+		if err := txn.Where("id = ?", userUUID).First(&user).Error; err != nil {
+			return err
 		}
 
 		train.AvailableSeats--
@@ -39,8 +47,8 @@ func BookSeat(c *gin.Context, db *gorm.DB) {
 		}
 
 		booking = models.Booking{
-			UserID:     userID,
-			TrainID:    train.ID,
+			UserID:     user.UserID,
+			TrainID:    train.TrainID,
 			SeatNumber: train.TotalSeats - train.AvailableSeats,
 		}
 
@@ -57,9 +65,9 @@ func BookSeat(c *gin.Context, db *gorm.DB) {
 	}
 
 	type BookingResponse struct {
-		UserID     uint `json:"user_id"`
-		TrainID    uint `json:"train_id"`
-		SeatNumber int  `json:"seat_number"`
+		UserID     int64 `json:"user_id"`
+		TrainID    int64 `json:"train_id"`
+		SeatNumber int   `json:"seat_number"`
 	}
 
 	c.JSON(http.StatusOK, gin.H{

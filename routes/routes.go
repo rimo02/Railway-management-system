@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"Railway-management-system/controllers"
 	"Railway-management-system/middleware"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func InitializeRoutes(r *gin.Engine, db *gorm.DB) {
@@ -12,6 +12,7 @@ func InitializeRoutes(r *gin.Engine, db *gorm.DB) {
 
 	api.POST("/register", func(c *gin.Context) { controllers.Register(c, db) })
 	api.POST("/login", func(c *gin.Context) { controllers.Login(c, db) })
+	api.POST("/refresh", func(c *gin.Context) { controllers.RefreshToken(c) })
 
 	admin := api.Group("/admin")
 	admin.Use(middleware.APIKeyAuth())
